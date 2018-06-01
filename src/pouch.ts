@@ -9,14 +9,8 @@ export interface IPouch {
   isTestnet: boolean
   mnemonic: string
   folds: IFold[]
+
+  sendAmount(amount: number): Promise<{}>
 }
 
-export class Pouch {
-  derive(node: Node, index: Index, hardened: boolean): IPouch {
-    if (hardened) {
-      return node.deriveHardened(index)
-    } else {
-      return node.derive(index)
-    }
-  }
-}
+export class Pouch {}

@@ -1,18 +1,31 @@
+import _ from 'lodash'
+import { Mnemonic } from 'wallet.ts'
+import * as bip39 from 'bip39'
+
 export namespace Currencies {
-  const Cryptos = {
-    BTC: { prefix: '\u0E3F', name: 'Bitcoin', bannerName: 'BTC', index: 0 },
-    ETH: { prefix: '\u039E', name: 'Ethereum', bannerName: 'ETH', index: 1 },
-    DAO: { prefix: '\u0110', name: 'The DAO', bannerName: 'DAO', index: 2 },
-    DASH: { prefix: '\u2145', name: 'Dash', bannerName: 'DSH', index: 3 },
-    ETC: { prefix: '\u039E', name: 'Ethereum Classic', bannerName: 'ETC', index: 4 },
-    REP: { prefix: '\u024C', name: 'Augur', bannerName: 'REP', index: 5 },
-    LTC: { prefix: '\u0141', name: 'Litecoin', bannerName: 'LTC', index: 6 },
-    LSK: { prefix: '\u2C60', name: 'Lisk', bannerName: 'LSK', index: 7 },
-    ZEC: { prefix: '\u24E9', name: 'ZCash', bannerName: 'ZEC', index: 8 },
-    TESTNET_RSK: { prefix: '\uc98c', name: 'Rootstock Testnet', bannerName: 'RSK', index: 9 }
+  export interface CryptocurrencyInfo {
+    prefix: string
+    name: string
+    abbreviation: string
+    index: number
   }
 
-  const Fiat = {
+  export type CryptoDictionary = { [key: string]: CryptocurrencyInfo }
+
+  export const Cryptos: CryptoDictionary = {
+    BTC: { prefix: '\u0E3F', name: 'Bitcoin', abbreviation: 'BTC', index: 0 },
+    ETH: { prefix: '\u039E', name: 'Ethereum', abbreviation: 'ETH', index: 1 },
+    DAO: { prefix: '\u0110', name: 'The DAO', abbreviation: 'DAO', index: 2 }
+  }
+
+  export interface FiatCurrencyInfo {
+    prefix: string
+    name: string
+  }
+
+  export type FiatDictionary = { [key: string]: FiatCurrencyInfo }
+
+  export const Fiat: FiatDictionary = {
     AUD: { prefix: 'AU$', name: 'Australian Dollar' },
     BRL: { prefix: 'R$', name: 'Brazilian Real' },
     CAD: { prefix: 'CA$', name: 'Canadian Dollar' },
@@ -47,4 +60,32 @@ export namespace Currencies {
     USD: { prefix: 'US$', name: 'United States Dollar' },
     ZAR: { prefix: '\u0052', name: 'South African Rand' }
   }
+}
+
+export function getFiatPrefixes() {
+  return _.mapValues(Currencies.Fiat, c => c.prefix)
+}
+
+export function getCryptoPrefixes() {
+  return _.mapValues(Currencies.Cryptos, c => c.prefix)
+}
+
+export function getCryptoNames() {
+  return _.mapValues(Currencies.Cryptos, c => c.name)
+}
+
+export function validateMnemonic(mnemonic: string): boolean {
+  return bip39.validateMnemonic(mnemonic)
+}
+
+export function getCurrencyPrefix(currency: string): string | null {
+  if (_.has(Currencies.Cryptos, `${currency}.prefix`)) {
+    return Currencies.Cryptos[currency].prefix
+  }
+
+  if (_.has(Currencies.Fiat, `${currency}.prefix`)) {
+    return Currencies.Fiat[currency].prefix
+  }
+
+  return null
 }
